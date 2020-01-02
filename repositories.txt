@@ -1,0 +1,2 @@
+repo-1 ../example-repo-1
+repo-2 https://github.com/example/example-repo.git
