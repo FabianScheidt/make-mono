@@ -30,13 +30,13 @@ do
 
 	echo "Rewriting files to subfolders..."
 	tab="$(printf '\t')"
-	index_filter_cmd="git ls-files -s | sed \"s/${tab}/${tab}$name\//\" | GIT_INDEX_FILE=\${GIT_INDEX_FILE}.new git update-index --index-info && mv \${GIT_INDEX_FILE}.new \${GIT_INDEX_FILE}"
+	index_filter_cmd="git ls-files -s | sed \"s/${tab}/${tab}${name//\//\\\/}\//\" | GIT_INDEX_FILE=\${GIT_INDEX_FILE}.new git update-index --index-info && mv \${GIT_INDEX_FILE}.new \${GIT_INDEX_FILE}"
 	git filter-branch -f --index-filter "$index_filter_cmd" --tag-name-filter "cat" -- --remotes="$name"
 
 	echo "Tracking and prefixing branches..."
 	for branch in $(git branch --remote --list "$name/*"); do
     	git branch --track "$name/${branch##*/}" "$branch"
-		cat ../merged-branches.txt | sed -e "s/^\(${branch##*/}.*\)/\1 $name\/${branch##*/}/" > ../.merged-branches.txt
+		cat ../merged-branches.txt | sed -e "s/^\(${branch##*/}.*\)/\1 ${name//\//\\\/}\/${branch##*/}/" > ../.merged-branches.txt
 		mv ../.merged-branches.txt ../merged-branches.txt
 	done
 
